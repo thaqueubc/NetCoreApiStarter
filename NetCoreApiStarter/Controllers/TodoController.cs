@@ -8,6 +8,7 @@ using NetCoreApiStarter.Models;
 
 namespace NetCoreApiStarter.Controllers
 {
+    [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
     public class TodoController : ControllerBase
@@ -41,8 +42,30 @@ namespace NetCoreApiStarter.Controllers
             }
             return new ObjectResult(item);
         }
+        /// <summary>
+        /// Creates a TodoItem.
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /Todo
+        ///     {
+        ///        "description": "Item1",
+        ///        "isComplete": true,
+        ///        "priority": 1,
+        ///        "createdOn": "2020-01-01T00:00:00.0000001"
+        ///     }
+        /// </remarks> 
+        /// /// <returns>A newly created Todo Item</returns>
+        /// <response code="201">Returns the newly created item</response>
+        /// <response code="400">If the item is not saved</response>
+
+        /// <param name="todo"></param>
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+
         public IActionResult Create(ToDo todo)
         {
             try
@@ -50,7 +73,7 @@ namespace NetCoreApiStarter.Controllers
                 _context.ToDos.Add(todo);
                 _context.SaveChanges();
                 // This allows for a status code of 201 (Created)
-                return new ObjectResult(todo);
+                return new CreatedAtRouteResult("", new { id = todo.Id }, todo);
             }
             catch (Exception e)
             {
@@ -75,6 +98,12 @@ namespace NetCoreApiStarter.Controllers
             }
             return new ObjectResult(item);
         }
+
+        /// <summary>
+        /// Deletes a specific Project.
+        /// </summary> 
+        /// <param name="id"></param>
+
 
         [HttpDelete]
         [Route("MyDelete")] // Custom route

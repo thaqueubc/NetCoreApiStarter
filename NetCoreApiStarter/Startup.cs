@@ -31,6 +31,20 @@ namespace NetCoreApiStarter
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"))
             );
 
+            // Call this before AddMvc()
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder =>
+                    {
+                        builder
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
+                    });
+            });
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -48,6 +62,7 @@ namespace NetCoreApiStarter
             }
 
             app.UseHttpsRedirection();
+            app.UseCors("AllowAll");
             app.UseMvc();
         }
     }
